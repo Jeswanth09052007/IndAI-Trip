@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rainy Weather Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+    }
+
+    #weather-display {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="weather-display">
+    <h1 id="temperature">15°C</h1>
+    <p id="condition">Rainy</p>
+  </div>
+  <canvas id="weather-canvas"></canvas>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.3/howler.min.js"></script>
+  <script>
+    // Rain Animation
+    const canvas = document.getElementById('weather-canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const raindrops = [];
+    for (let i = 0; i < 100; i++) {
+      raindrops.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        speed: Math.random() * 4 + 2,
+        length: Math.random() * 20 + 10,
+      });
+    }
+
+    function drawRain() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = 'rgba(174,194,224,0.5)';
+      ctx.lineWidth = 2;
+      raindrops.forEach(drop => {
+        ctx.beginPath();
+        ctx.moveTo(drop.x, drop.y);
+        ctx.lineTo(drop.x, drop.y + drop.length);
+        ctx.stroke();
+        drop.y += drop.speed;
+        if (drop.y > canvas.height) {
+          drop.y = -drop.length;
+          drop.x = Math.random() * canvas.width;
+        }
+      });
+      requestAnimationFrame(drawRain);
+    }
+    drawRain();
+
+    // Rain Sound Effect
+    const rainSound = new Howl({
+      src: ['https://www.soundjay.com/nature/rain-01.mp3'], // Rain sound file
+      loop: true,
+      volume: 0.5,
+    });
+    rainSound.play();
+
+    // Handle Window Resize
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
